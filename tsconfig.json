@@ -1,3 +1,14 @@
 {
-  "extends": "astro/tsconfigs/strict"
+  "extends": "chetzof-lint-config/tsconfig/tsconfig.json",
+    "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["src/components/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@assets/*": ["src/assets/*"],
+      "@data": ["src/data/info"],
+      "@utils": ["src/utils"],
+      "@types": ["src/types"]
+    }
+  }
 }
