@@ -2,10 +2,6 @@
   "name": "sleepy-series",
   "version": "0.0.1",
   "prettier": "chetzof-lint-config/prettier/.prettierrc.js",
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
   "workspaces": [
     "./packages/*"
   ]

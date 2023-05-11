@@ -20,7 +20,7 @@ jobs:
       - name: Configure AWS credentials from Test account
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::799200882264:role/GithubOidcRole
+          role-to-assume: ${{ vars.AWS_ROLE }}
           aws-region: eu-central-1
       - name: Install dependencies
         run: npm ci
