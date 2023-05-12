@@ -10,6 +10,8 @@ export class BucketConstruct extends Construct {
       bucketName: 'chetzof-html-bucket',
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       autoDeleteObjects: true,
+      websiteIndexDocument: 'index.html',
+      publicReadAccess: true,
     })
   }
 }
