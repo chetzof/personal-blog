@@ -24,6 +24,9 @@ export class GithubRoleConstruct extends Construct {
         },
         'sts:AssumeRoleWithWebIdentity',
       ),
+      managedPolicies: [
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
+      ],
       inlinePolicies: {
         AssumeRole: new iam.PolicyDocument({
           statements: [
