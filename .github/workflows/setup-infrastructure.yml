@@ -23,4 +23,4 @@ jobs:
           aws-region: eu-central-1
       - name: Install dependencies
         run: npm ci
-      - run: npm run -w infra cdk deploy -- --require-approval never
+      - run: npm run -w infra cdk deploy ci -- --require-approval never
