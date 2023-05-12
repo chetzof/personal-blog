@@ -1,11 +1,9 @@
 import * as cdk from 'aws-cdk-lib'
 import { Construct } from 'constructs'
 import * as iam from 'aws-cdk-lib/aws-iam'
-
-export class ProviderStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props)
-
+export class GithubRoleConstruct extends Construct {
+  constructor(scope: Construct, id: string, props = {}) {
+    super(scope, id)
     const provider = new iam.OpenIdConnectProvider(this, 'GithubProvider', {
       url: 'https://token.actions.githubusercontent.com',
       clientIds: ['sts.amazonaws.com'],
@@ -13,6 +11,7 @@ export class ProviderStack extends cdk.Stack {
     })
 
     const githubRole = new iam.Role(this, 'GithubRole', {
+      roleName: 'GithubRole',
       assumedBy: new iam.FederatedPrincipal(
         provider.openIdConnectProviderArn,
         {
