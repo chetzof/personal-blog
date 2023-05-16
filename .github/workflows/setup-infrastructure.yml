@@ -2,6 +2,7 @@ name: 'Deploy infrasructure'
 on:
   push:
     paths:
+      - .github/workflows/**
       - packages/infra/**
 jobs:
   deploy:
