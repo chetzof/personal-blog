@@ -25,4 +25,6 @@ jobs:
         run: npm ci
       - run: npm run -w infra cdk deploy dns -- --require-approval never
       - run: npm run -w infra cdk deploy server -- --require-approval never
+      - name: Check out repository
+        uses: actions/checkout@v3
       - uses: ./.github/workflows/deploy-to-s3.yml@latest
