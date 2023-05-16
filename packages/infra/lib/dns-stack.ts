@@ -4,6 +4,7 @@ import * as route53 from 'aws-cdk-lib/aws-route53'
 import { HostedZone } from 'aws-cdk-lib/aws-route53'
 export class DnsStack extends cdk.Stack {
   public readonly hostedZone: route53.HostedZone
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
