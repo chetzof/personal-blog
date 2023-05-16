@@ -25,4 +25,4 @@ jobs:
         run: npm ci
       - run: npm run -w infra cdk deploy dns -- --require-approval never
       - run: npm run -w infra cdk deploy server -- --require-approval never
-      - uses: ./.github/workflows/deploy-to-s3.yml
+      - uses: ./.github/workflows/deploy-to-s3.yml@latest
