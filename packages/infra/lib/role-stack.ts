@@ -3,6 +3,7 @@ import { Construct } from 'constructs'
 import * as iam from 'aws-cdk-lib/aws-iam'
 
 export class RoleStack extends cdk.Stack {
+  public readonly role: iam.Role
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
     const provider = new iam.OpenIdConnectProvider(this, 'GithubProvider', {
@@ -11,7 +12,7 @@ export class RoleStack extends cdk.Stack {
       thumbprints: ['6938fd4d98bab03faadb97b34396831e3780aea1'],
     })
 
-    const githubRole = new iam.Role(this, 'GithubRole', {
+    this.role = new iam.Role(this, 'GithubRole', {
       roleName: 'GithubRole',
       assumedBy: new iam.FederatedPrincipal(
         provider.openIdConnectProviderArn,
@@ -28,6 +29,7 @@ export class RoleStack extends cdk.Stack {
       ),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('CloudFrontFullAccess'),
       ],
       inlinePolicies: {
         AssumeRole: new iam.PolicyDocument({

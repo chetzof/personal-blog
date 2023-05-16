@@ -6,9 +6,11 @@ import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as targets from 'aws-cdk-lib/aws-route53-targets'
 import * as acm from 'aws-cdk-lib/aws-certificatemanager'
-import { CfnOutput } from 'aws-cdk-lib'
+import { CfnOutput, Stack } from 'aws-cdk-lib'
+import * as iam from 'aws-cdk-lib/aws-iam'
 interface ConsumerProps extends cdk.StackProps {
   hostedZone: route53.HostedZone
+  role: iam.Role
 }
 
 export class ServerStack extends cdk.Stack {
@@ -45,15 +47,24 @@ export class ServerStack extends cdk.Stack {
       },
     )
 
-    new CfnOutput(this, 'distributionId', {
-      value: distribution.distributionId,
-    })
-
     new route53.ARecord(this, 'Cloudfront', {
       zone: props.hostedZone,
       target: route53.RecordTarget.fromAlias(
         new targets.CloudFrontTarget(distribution),
       ),
+    })
+
+    new CfnOutput(this, 'distributionId', {
+      value: distribution.distributionId,
+    })
+    new CfnOutput(this, 'roleArn', {
+      value: props.role.roleArn,
+    })
+    new CfnOutput(this, 'awsBucketId', {
+      value: bucket.bucketName,
+    })
+    new CfnOutput(this, 'regionId', {
+      value: Stack.of(this).region,
     })
   }
 }
