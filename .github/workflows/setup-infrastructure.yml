@@ -21,13 +21,14 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           role-to-assume: ${{ vars.AWS_ROLE }}
-          aws-region: ${{ vars.AWS_REGION }}
       - name: Install dependencies
         run: npm ci
       - run: npm run -w infra cdk deploy dns -- --require-approval never
       - run: npx aws-cdk deploy server --require-approval never -O output.json
         working-directory: ./packages/infra
-      - run: gh variable set AWS_DISTRIBUTION --body "$(jq -r .server.distributionId  output.json)"
+      - run: |
+          gh variable set AWS_DISTRIBUTION --body "$(jq -r .server.distributionId  output.json)"
+          gh variable set AWS_BUCKET --body "$(jq -r .server.awsBucketId  output.json)"
         working-directory: ./packages/infra
         env:
           GH_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
