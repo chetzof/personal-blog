@@ -6,6 +6,7 @@ import * as s3 from 'aws-cdk-lib/aws-s3'
 import * as route53 from 'aws-cdk-lib/aws-route53'
 import * as targets from 'aws-cdk-lib/aws-route53-targets'
 import * as acm from 'aws-cdk-lib/aws-certificatemanager'
+import { CfnOutput } from 'aws-cdk-lib'
 interface ConsumerProps extends cdk.StackProps {
   hostedZone: route53.HostedZone
 }
@@ -43,6 +44,10 @@ export class ServerStack extends cdk.Stack {
         domainNames: [this.node.getContext('domain')],
       },
     )
+
+    new CfnOutput(this, 'distributionId', {
+      value: distribution.distributionId,
+    })
 
     new route53.ARecord(this, 'Cloudfront', {
       zone: props.hostedZone,
