@@ -1,12 +1,23 @@
 name: 'Deploy to S3'
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - packages/front/**
+#  push:
+#    paths:
+#      - packages/front/**
 jobs:
+  pre_job:
+    runs-on: ubuntu-latest
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@v3.4.0
+        with:
+          skip_after_successful_duplicate: 'true'
   deploy:
     name: Deploy to S3
+    needs: pre_job
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -26,5 +37,6 @@ jobs:
         run: npm ci
       - run: npm run -w front build
       - name: Copy files to the production website with the AWS CLI
-        run: |
-          aws s3 sync ./packages/front/dist s3://${{ vars.AWS_BUCKET }}
+        run: aws s3 sync ./packages/front/dist s3://${{ vars.AWS_BUCKET }}
+      - name: Invalidate Cloudfront
+        run: aws cloudfront create-invalidation --distribution-id ${{ vars.AWS_DISTRIBUTION }} --paths "/*"

@@ -1,10 +1,11 @@
 ---
-import { IHeroProps } from "@types";
-
-const { name, about } = Astro.props as IHeroProps;
+import { IHeroProps } from '@types'
+import HeroPhoto from './HeroPhoto.astro'
+const { name, about } = Astro.props as IHeroProps
 ---
 
 <section>
+  <HeroPhoto />
   <p class="dark:text-light mt-[117px]">Hey, I’m</p>
   <h1>{name}</h1>
   <p class="dark:text-light text-lg mb-16">

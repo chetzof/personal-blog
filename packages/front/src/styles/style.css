@@ -12,10 +12,6 @@
 @layer components {
   body {
     @apply bg-light dark:bg-dark;
-    background-image: url("/me.png");
-    background-repeat: no-repeat;
-    background-position: 100% 0%;
-    background-size: 30%;
   }
   .container {
     @apply max-w-[1112px] mx-auto px-4;

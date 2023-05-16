@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 import 'source-map-support/register'
 import * as cdk from 'aws-cdk-lib'
-import { BootstrapStack } from '../lib/bootstrap-stack'
-import { CiStack } from '../lib/ci-stack'
+import { RoleStack } from '../lib/role-stack'
+import { ServerStack } from '../lib/server-stack'
+import { DnsStack } from '../lib/dns-stack'
 const app = new cdk.App()
-new BootstrapStack(app, 'bootstrap')
-new CiStack(app, 'ci')
+new RoleStack(app, 'role')
+const { hostedZone } = new DnsStack(app, 'dns')
+new ServerStack(app, 'server', { hostedZone })
