@@ -9,5 +9,6 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - run: |
-          gh variable set AWS_TEST --body "1"
+      - run: gh variable set AWS_TEST --body "1"
+        env:
+          GH_TOKEN: ${{ github.token }}
