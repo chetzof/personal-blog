@@ -1,0 +1,13 @@
+name: 'Test'
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    steps:
+      - run: |
+          gh variable set AWS_TEST --body "1"
