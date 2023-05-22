@@ -1,0 +1,8 @@
+{
+  "extends": "chetzof-lint-config/tsconfig/tsconfig.json",
+  "include": ["./bootstrap/**/*"],
+  "compilerOptions": {
+    "module": "node16",
+    "baseUrl": "./"
+  }
+}
