@@ -25,6 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - run: npx aws-cdk deploy dns --require-approval never
+        working-directory: ./packages/infra
       - run: npx aws-cdk deploy server --require-approval never
         working-directory: ./packages/infra
       - run: gh workflow run deploy-to-s3.yml
