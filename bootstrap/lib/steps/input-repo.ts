@@ -1,12 +1,21 @@
 import { $ } from 'execa'
 
 import type { Context } from '@/bootstrap'
-import { runAndParse } from '@/bootstrap/lib/util'
+import {
+  getContextVar,
+  runAndParse,
+  saveContextVar,
+} from '@/bootstrap/lib/util'
 
 import type { ListrTask } from 'listr2'
 
 export const inputRepo: ListrTask<Context> = {
   async task(context, task) {
+    const savedRepo = await getContextVar('repo')
+    if (savedRepo) {
+      context.repo = savedRepo
+      return
+    }
     const repos = await runAndParse<Array<{ nameWithOwner: string }>>(
       $`gh repo list --json nameWithOwner`,
       task,
@@ -18,6 +27,7 @@ export const inputRepo: ListrTask<Context> = {
       message: 'Start typing the name of your github repo...',
       choices: list,
     })
+    await saveContextVar('repo', context.repo)
   },
   options: {
     persistentOutput: true,

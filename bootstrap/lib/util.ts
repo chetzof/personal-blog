@@ -1,11 +1,12 @@
 import chalk from 'chalk'
 import { $ } from 'execa'
+import fsJetpack from 'fs-jetpack'
 
 import type { Context } from '@/bootstrap'
 import { toExecaError } from '@/bootstrap/lib/error'
 
 import type { ExecaChildProcess } from 'execa'
-import type { ListrTaskWrapper, ListrTaskWrapper } from 'listr2'
+import type { ListrTaskWrapper } from 'listr2'
 
 type StackNames = 'dns' | 'role' | 'server'
 interface StackContext {
@@ -131,10 +132,31 @@ export async function setGithubVar({
   await run($`gh variable set ${varName} --body ${varValue} -R ${repo}`, task)
 }
 
-export function getTaskContextValue(key: keyof Context, context: Context) {
+export function getTaskContextValue<T extends keyof Context>(
+  key: T,
+  context: Context,
+): NonNullable<Context[T]> {
   if (!context[key]) {
     throw createError(`Key ${key} is not set`)
   }
 
-  return context[key]
+  return context[key] as NonNullable<Context[T]>
+}
+const path = './packages/infra/cdk.json'
+
+export async function saveContextVar(key: keyof StackContext, value: string) {
+  const content = (await fsJetpack.readAsync(path, 'json')) as {
+    context: Record<string, string>
+  }
+  content.context[key] = value
+  await fsJetpack.writeAsync(path, content)
+}
+
+export async function getContextVar(
+  key: keyof StackContext,
+): Promise<string | undefined> {
+  const content = (await fsJetpack.readAsync(path, 'json')) as {
+    context: Record<string, string>
+  }
+  return content.context[key]
 }

@@ -1,11 +1,13 @@
 import * as cdk from 'aws-cdk-lib'
-import { Construct } from 'constructs'
+import { CfnOutput } from 'aws-cdk-lib'
 import * as iam from 'aws-cdk-lib/aws-iam'
+
+import type { Construct } from 'constructs'
 
 export class RoleStack extends cdk.Stack {
   public readonly role: iam.Role
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props)
+  constructor(scope: Construct, id: string, properties?: cdk.StackProps) {
+    super(scope, id, properties)
     const provider = new iam.OpenIdConnectProvider(this, 'GithubProvider', {
       url: 'https://token.actions.githubusercontent.com',
       clientIds: ['sts.amazonaws.com'],
@@ -13,7 +15,6 @@ export class RoleStack extends cdk.Stack {
     })
 
     this.role = new iam.Role(this, 'GithubRole', {
-      roleName: 'GithubRole',
       assumedBy: new iam.FederatedPrincipal(
         provider.openIdConnectProviderArn,
         {
@@ -21,8 +22,9 @@ export class RoleStack extends cdk.Stack {
             'token.actions.githubusercontent.com:aud': 'sts.amazonaws.com',
           },
           StringLike: {
-            'token.actions.githubusercontent.com:sub':
-              'repo:chetzof/personal-blog:*',
+            'token.actions.githubusercontent.com:sub': `repo:${this.node.getContext(
+              'repo',
+            )}:*`,
           },
         },
         'sts:AssumeRoleWithWebIdentity',
@@ -30,6 +32,9 @@ export class RoleStack extends cdk.Stack {
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
         iam.ManagedPolicy.fromAwsManagedPolicyName('CloudFrontFullAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName(
+          'AWSCloudFormationReadOnlyAccess',
+        ),
       ],
       inlinePolicies: {
         AssumeRole: new iam.PolicyDocument({
@@ -41,6 +46,10 @@ export class RoleStack extends cdk.Stack {
           ],
         }),
       },
+    })
+
+    new CfnOutput(this, 'roleArn', {
+      value: this.role.roleArn,
     })
   }
 }

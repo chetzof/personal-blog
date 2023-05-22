@@ -14,8 +14,5 @@
     "astro": "^2.4.2",
     "sharp": "^0.32.1",
     "tailwindcss": "^3.3.2"
-  },
-  "devDependencies": {
-    "chetzof-lint-config": "^1.0.15"
   }
 }
