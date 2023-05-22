@@ -29,3 +29,5 @@ jobs:
       - run: npx aws-cdk deploy server --require-approval never
         working-directory: ./packages/infra
       - run: gh workflow run deploy-to-s3.yml
+        env:
+          GH_TOKEN: ${{ github.token }}
