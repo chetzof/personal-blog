@@ -39,7 +39,7 @@ jobs:
       - name: Load AWS resource ids
         id: aws
         run: |
-          echo "CLOUDFRONT=$(aws cloudformation describe-stacks --stack-name server --query "Stacks[0].Outputs[?OutputKey==`distributionId`].OutputValue" --output text)" >> "$GITHUB_OUTPUT"
+          echo "CLOUDFRONT=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`distributionId`].OutputValue" --output text)' >> "$GITHUB_OUTPUT"
           echo "S3=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`awsBucketId`].OutputValue' --output text)" >> "$GITHUB_OUTPUT"
       - name: Copy files to the production website with the AWS CLI
         run: aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}
