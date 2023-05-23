@@ -18,4 +18,5 @@ jobs:
       - name: Copy files to the production website with the AWS CLI
         id: aws_s3_sync
         run: |
-          output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
+          output=$("aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
+          echo $output
