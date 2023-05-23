@@ -1,0 +1,21 @@
+name: 'Test'
+on:
+  workflow_dispatch:
+jobs:
+  deploy:
+    name: Deploy to S3
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE }}
+          aws-region: ${{ vars.AWS_REGION }}
+      - name: Copy files to the production website with the AWS CLI
+        id: aws_s3_sync
+        run: |
+          output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
