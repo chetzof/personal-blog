@@ -45,7 +45,7 @@ jobs:
         id: s3_sync
         uses: haukurh/aws-s3-sync-action@v1
         with:
-          directory: dist/
+          directory:  ./packages/front/dist
           s3-bucket: ${{ steps.aws.outputs.S3 }}
           args: --size-only
 
