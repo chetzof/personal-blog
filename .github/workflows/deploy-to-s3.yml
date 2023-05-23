@@ -41,7 +41,21 @@ jobs:
         run: |
           echo "CLOUDFRONT=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`distributionId`].OutputValue' --output text)" >> "$GITHUB_OUTPUT"
           echo "S3=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`awsBucketId`].OutputValue' --output text)" >> "$GITHUB_OUTPUT"
-      - name: Copy files to the production website with the AWS CLI
-        run: aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}
-      - name: Invalidate Cloudfront
-        run: aws cloudfront create-invalidation --distribution-id ${{  steps.aws.outputs.CLOUDFRONT }} --paths "/*"
+      - name: Sync to S3
+        id: s3_sync
+        uses: haukurh/aws-s3-sync-action@v1
+        with:
+          directory: dist/
+          s3-bucket: ${{ steps.aws.outputs.S3 }}
+          args: --size-only
+
+      - name: Prepare CloudFront invalidation batch
+        id: cloudfront
+        uses: haukurh/aws-cloudfront-invalidation-action@v1
+        with:
+          sync-output: "${{ steps.s3_sync.outputs.stdout }}"
+          s3-bucket: ${{  steps.aws.outputs.S3 }}
+
+      - name: Run CloudFront invalidation
+        if: steps.cloudfront.outputs.quantity != 0
+        run: aws cloudfront create-invalidation --distribution-id ${{ steps.aws.outputs.CLOUDFRONT }} --paths "/*"
