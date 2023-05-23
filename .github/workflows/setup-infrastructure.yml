@@ -2,7 +2,7 @@ name: 'Deploy infrasructure'
 on:
   push:
     paths:
-      - .github/workflows/**
+      - .github/workflows/setup-infrastructure.yml
       - packages/infra/**
 jobs:
   deploy:

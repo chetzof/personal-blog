@@ -41,13 +41,17 @@ jobs:
         run: |
           echo "CLOUDFRONT=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`distributionId`].OutputValue' --output text)" >> "$GITHUB_OUTPUT"
           echo "S3=$(aws cloudformation describe-stacks --stack-name server --query 'Stacks[0].Outputs[?OutputKey==`awsBucketId`].OutputValue' --output text)" >> "$GITHUB_OUTPUT"
+      - name: Copy files to the production website with the AWS CLI
+        id: aws_s3_sync
+        run: |
+          output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
       - name: Sync to S3
         id: s3_sync
         uses: haukurh/aws-s3-sync-action@v1
         with:
-          directory:  ./packages/front/dist
+          directory: ./packages/front/dist
           s3-bucket: ${{ steps.aws.outputs.S3 }}
-          args: --size-only
+          args: --size-only --delete
 
       - name: Prepare CloudFront invalidation batch
         id: cloudfront
