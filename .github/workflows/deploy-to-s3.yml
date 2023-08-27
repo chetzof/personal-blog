@@ -49,5 +49,5 @@ jobs:
         uses: vladcosorg/action-s3-cloudfront-smart-deploy@v1
         with:
           source: ./packages/front/dist
-          target: ${{ steps.aws.outputs.S3 }}/
+          target: s3://${{ steps.aws.outputs.S3 }}/
           distribution: ${{ steps.aws.outputs.CLOUDFRONT }}
