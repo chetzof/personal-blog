@@ -44,7 +44,7 @@ jobs:
       - name: Copy files to the production website with the AWS CLI
         id: aws_s3_sync
         run: |
-          output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
+          output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }})
       - name: Upload changes to S3 and issue Cloudfront invalidations
         uses: vladcosorg/action-s3-cloudfront-smart-deploy@v1
         with:
