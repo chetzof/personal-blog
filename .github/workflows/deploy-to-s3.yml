@@ -1,9 +1,9 @@
 name: 'Deploy to S3'
 on:
   workflow_dispatch:
-#  push:
-#    paths:
-#      - packages/front/**
+  push:
+    paths:
+      - packages/front/**
 jobs:
   pre_job:
     runs-on: ubuntu-latest
@@ -45,21 +45,9 @@ jobs:
         id: aws_s3_sync
         run: |
           output=$(aws s3 sync ./packages/front/dist s3://${{  steps.aws.outputs.S3 }}")
-      - name: Sync to S3
-        id: s3_sync
-        uses: haukurh/aws-s3-sync-action@v1
+      - name: Upload changes to S3 and issue Cloudfront invalidations
+        uses: vladcosorg/action-s3-cloudfront-smart-deploy@v1
         with:
-          directory: ./packages/front/dist
-          s3-bucket: ${{ steps.aws.outputs.S3 }}
-          args: --size-only --delete
-
-      - name: Prepare CloudFront invalidation batch
-        id: cloudfront
-        uses: haukurh/aws-cloudfront-invalidation-action@v1
-        with:
-          sync-output: "${{ steps.s3_sync.outputs.stdout }}"
-          s3-bucket: ${{  steps.aws.outputs.S3 }}
-
-      - name: Run CloudFront invalidation
-        if: steps.cloudfront.outputs.quantity != 0
-        run: aws cloudfront create-invalidation --distribution-id ${{ steps.aws.outputs.CLOUDFRONT }} --paths "/*"
+          source: ./packages/front/dist
+          target: ${{ steps.aws.outputs.S3 }}/
+          distribution: ${{ steps.aws.outputs.CLOUDFRONT }}
